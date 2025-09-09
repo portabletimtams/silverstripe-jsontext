@@ -19,23 +19,9 @@ class JSONTextTest extends SapphireTest
      * @var array
      */
     protected $fixtures = [
-        'array'     => 'fixtures/json/array.json',
-        'object'    => 'fixtures/json/object.json'
+        'array'     => __DIR__ . '/fixtures/json/array.json',
+        'object'    => __DIR__ . '/fixtures/json/object.json'
     ];
-
-    /**
-     * JSONTextTest constructor.
-     *
-     * Modify fixtures property to be able to run on PHP <5.6 without use of constant in class property which 5.6+ allows
-     */
-    public function __construct()
-    {
-        foreach($this->fixtures as $name => $path) {
-            $this->fixtures[$name] = realpath(__DIR__) . '/' . $path;
-        }
-        
-        parent::__construct();
-    }
 
     /**
      * @todo There are a ton more permutations of a JSONPath regex

@@ -44,14 +44,15 @@
 
 namespace PhpTek\JSONText\Extension;
 
-use PhpTek\JSONText\Exception\JSONTextException;
-use PhpTek\JSONText\ORM\FieldType\JSONText;
-use SilverStripe\CMS\Controllers\CMSPageEditController;
-use SilverStripe\Control\Controller;
+use SilverStripe\Core\Extension;
 use SilverStripe\Control\Director;
-use SilverStripe\ORM\DataExtension;
+use SilverStripe\Control\Controller;
+use SilverStripe\CMS\Controllers\CMSMain;
+use PhpTek\JSONText\ORM\FieldType\JSONText;
+use PhpTek\JSONText\Exception\JSONTextException;
+use SilverStripe\CMS\Controllers\CMSPageEditController;
 
-class JSONTextExtension extends DataExtension
+class JSONTextExtension extends Extension
 {
 
     public function __construct()
@@ -73,17 +74,15 @@ class JSONTextExtension extends DataExtension
      */
     public function onBeforeWrite()
     {
-        parent::onBeforeWrite();
-
-        if (Controller::has_curr()) {
+        $controller = Controller::curr();
+        if ($controller) {
             $owner = $this->getOwner();
-            $controller = Controller::curr();
             $postVars = $controller->getRequest()->postVars();
             $fieldMap = $owner->config()->get('json_field_map');
             $doUpdate = (
                 count($postVars) &&
                 !empty($fieldMap) &&
-                in_array(get_class($controller), [CMSPageEditController::class])
+                $controller instanceof CMSMain
             );
 
             if (!$doUpdate) {

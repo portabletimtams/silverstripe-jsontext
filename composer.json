@@ -2,7 +2,18 @@
     "name": "goldfinch/silverstripe-jsontext",
     "description": "JSON storage, querying and modification.",
     "type": "silverstripe-vendormodule",
-    "keywords": ["silverstripe", "json", "dbfield", "query", "multi", "multivalue", "multivaluefield", "text", "JSONPath", "Postgres"],
+    "keywords": [
+        "silverstripe",
+        "json",
+        "dbfield",
+        "query",
+        "multi",
+        "multivalue",
+        "multivaluefield",
+        "text",
+        "JSONPath",
+        "Postgres"
+    ],
     "license": "BSD-3-Clause",
     "authors": [
         {
@@ -12,18 +23,18 @@
         }
     ],
     "require": {
-        "php": ">=5.6.0",
-        "silverstripe/framework": "^4.0 || ^5.0",
+        "php": "^8.3",
+        "silverstripe/framework": "^6",
         "peekmo/jsonpath": "dev-master"
     },
     "require-dev": {
-        "phpunit/phpunit": "^5.7 || ^9.5"
+        "phpunit/phpunit": "^11"
     },
     "support": {
         "issues": "https://github.com/goldfinch/silverstripe-jsontext/issues"
     },
     "suggest": {
-      "silverstripe/cms": "Use silverstripe/cms package if you want to write to JSON-backed DB fields via the CMS module's UI"
+        "silverstripe/cms": "Use silverstripe/cms package if you want to write to JSON-backed DB fields via the CMS module's UI"
     },
     "extra": {
         "installer-name": "jsontext"

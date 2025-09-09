@@ -6,9 +6,13 @@
  * @author Russell Michell <russ@theruss.com>
  */
 
-use PhpTek\JSONText\Exception\JSONTextException;
-use SilverStripe\Dev\FunctionalTest;
 use SilverStripe\Security\Member;
+use SilverStripe\Security\Security;
+use SilverStripe\Control\Controller;
+use SilverStripe\Core\Config\Config;
+use SilverStripe\Dev\FunctionalTest;
+use SilverStripe\CMS\Controllers\CMSMain;
+use PhpTek\JSONText\Exception\JSONTextException;
 use PhpTek\JSONText\Dev\Fixture\MyAwesomeJSONPage;
 
 class JSONTextExtensionTest extends FunctionalTest
@@ -19,24 +23,12 @@ class JSONTextExtensionTest extends FunctionalTest
     protected static $extra_dataobjects = [
         MyAwesomeJSONPage::class,
     ];
-    
+
     /**
      * @var string
      */
-    protected static $fixture_file;
-    
-    /**
-     * Modifies fixtures property to be able to run on PHP <5.6 without use of constant in class property which 5.6+ allows
-     */
-    public function __construct()
-    {
-        $dir = realpath(__DIR__);
-        
-        self::$fixture_file = $dir . '/fixtures/yml/JSONTextExtension.yml';
-        
-        parent::__construct();
-    }
-    
+    protected static $fixture_file = __DIR__ . '/fixtures/yml/JSONTextExtension.yml';
+
     /**
      * Is an exception thrown when no POSTed vars are available for
      * non DB-backed fields declared on a SiteTree class?
@@ -45,17 +37,20 @@ class JSONTextExtensionTest extends FunctionalTest
     {
         $member = $this->objFromFixture(Member::class, 'admin');
         $fixture = $this->objFromFixture(MyAwesomeJSONPage::class, 'dummy');
-        
-        $member->logIn();
-        $fixture->config()->update('json_field_map', ['MyJSON' => ['FooField']]);
+        $cmsBase = CMSMain::singleton()->Link();
+
+        $this->logInAs($member);
+        Config::modify()->set(MyAwesomeJSONPage::class, 'json_field_map', [
+            'MyJSON' => ['FooField'],
+        ]);
         $fixture->write();
-        
+
         // Submit a CMS POST request _without_ JSON data
-        $this->setExpectedException(JSONTextException::class);
-        $this->post('admin/pages/edit/EditForm/44/', [
+        $this->expectException(JSONTextException::class);
+        $this->post(Controller::join_links($cmsBase, 'edit/EditForm/', $fixture->ID), [
             'ParentID' => '0',
             'action_save' => 'Saved',
-            'ID' => '44',
+            'ID' => $fixture->ID,
         ]);
     }
 }
