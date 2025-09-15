@@ -16,23 +16,9 @@ class JSONTextSetValueTest extends SapphireTest
      * @var array
      */
     protected $fixtures = [
-        'array'     => 'fixtures/json/array.json',
-        'object'    => 'fixtures/json/object.json'
+        'array'     => __DIR__ . '/fixtures/json/array.json',
+        'object'    => __DIR__ . '/fixtures/json/object.json'
     ];
-
-    /**
-     * JSONTextTest constructor.
-     *
-     * Modify fixtures property to be able to run on PHP <5.6 without use of constant in class property which 5.6+ allows
-     */
-    public function __construct()
-    {
-        foreach($this->fixtures as $name => $path) {
-            $this->fixtures[$name] = realpath(__DIR__) . '/' . $path;
-        }
-        
-        parent::__construct();
-    }
 
     /**
      * Tests JSONText::setValue() by means of a simple JSONPath expression operating on a JSON array
@@ -48,7 +34,7 @@ class JSONTextSetValueTest extends SapphireTest
         // Assert current value
         $this->assertEquals(['trabant'], $field->query('$.[2]'));
         // Now update it...
-        $field->setValue('lada', null, '$.[2]');
+        $field->setValue('lada', null, true, '$.[2]');
         // Assert new value
         $this->assertEquals(['lada'], $field->query('$.[2]'));
 
@@ -61,26 +47,26 @@ class JSONTextSetValueTest extends SapphireTest
         // Assert current value
         $this->assertEquals([33.3333], $field->query('$.[6]'));
         // Now update it...
-        $field->setValue(99.99, null, '$.[6]');
+        $field->setValue(99.99, null, true, '$.[6]');
         // Assert new value
         $this->assertEquals([99.99], $field->query('$.[6]'));
 
         // Invalid #1
-        $this->setExpectedException(JSONTextException::class);
-        $field->setValue(99.99, null, '$[6]'); // Invalid JSON path expression
+        $this->expectException(JSONTextException::class);
+        $field->setValue(99.99, null, true, '$[6]'); // Invalid JSON path expression
 
         // Reset expected exception
-        $this->setExpectedException(null);
+        $this->expectException(null);
 
         // Invalid #2
-        $this->setExpectedException(JSONTextException::class);
+        $this->expectException(JSONTextException::class);
         $field->setValue('true'); // Invalid JSON passed to setValue()
 
         // Reset expected exception
-        $this->setExpectedException(null);
+        $this->expectException(null);
 
         // Invalid #3
-        $this->setExpectedException(JSONTextException::class);
+        $this->expectException(JSONTextException::class);
         $field->setValue('{'); // Invalid JSON. Period.
 
         // Ensure default SS behaviour is respected with empty strings, evenm though it's invalid JSON
@@ -104,7 +90,7 @@ class JSONTextSetValueTest extends SapphireTest
         // Assert we cannot use array accessors at the root level of the source JSON _object_
         $this->assertEmpty($field->query('$.[2]'));
         // Assert current types and value
-        $this->assertInternalType('array', $field->query('$.cars'));
+        $this->assertIsArray($field->query('$.cars'));
         $this->assertCount(1, $field->query('$.cars')); // The "cars" key's value is an object returned as a single value array
         $this->assertCount(3, $field->query('$.cars')[0]); //...with three classifications of car manufacturer by country
         $this->assertCount(2, $field->query('$.cars')[0]['british']);
@@ -116,10 +102,10 @@ class JSONTextSetValueTest extends SapphireTest
             'british'   => ['aston martin', 'austin', 'rover']
         ];
 
-        $field->setValue($newCars, null, '$.cars');
+        $field->setValue($newCars, null, true, '$.cars');
 
         // Assert news types and value
-        $this->assertInternalType('array', $field->query('$.cars'));
+        $this->assertIsArray($field->query('$.cars'));
         $this->assertCount(1, $field->query('$.cars')); // The "cars" key's value is an object returned as a single value array
         $this->assertCount(2, $field->query('$.cars')[0]); //...with three classifications of car manufacturer by country
         $this->assertCount(3, $field->query('$.cars')[0]['british']);
@@ -131,8 +117,8 @@ class JSONTextSetValueTest extends SapphireTest
             'american'   => ['chrysler', 'general motors', 'edsel']
         ];
 
-        $this->setExpectedException(JSONTextException::class);
-        $field->setValue($newerCars, null, '{"cars":"american"}'); // setValue() only takes JSONPath expressions
+        $this->expectException(JSONTextException::class);
+        $field->setValue($newerCars, null, true, '{"cars":"american"}'); // setValue() only takes JSONPath expressions
     }
 
     /**
@@ -146,5 +132,4 @@ class JSONTextSetValueTest extends SapphireTest
         $files = $this->fixtures;
         return file_get_contents($files[$fixture]);
     }
-
 }

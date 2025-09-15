@@ -41,16 +41,18 @@
 
 namespace PhpTek\JSONText\ORM\FieldType;
 
+use SilverStripe\ORM\DB;
+use Peekmo\JsonPath\JsonStore;
+use SilverStripe\Forms\FormField;
+use SilverStripe\Model\ModelData;
+use SilverStripe\Forms\HiddenField;
+use SilverStripe\ORM\FieldType\DBField;
+use SilverStripe\Core\Injector\Injector;
+use SilverStripe\ORM\FieldType\DBString;
 use PhpTek\JSONText\Exception\JSONTextException;
-use PhpTek\JSONText\Exception\JSONTextInvalidArgsException;
 use PhpTek\JSONText\Exception\JSONTextDataException;
 use PhpTek\JSONText\Exception\JSONTextConfigException;
-use Peekmo\JsonPath\JsonStore;
-use SilverStripe\ORM\DB;
-use SilverStripe\Core\Injector\Injector;
-use SilverStripe\ORM\FieldType\DBField;
-use SilverStripe\ORM\FieldType\DBString;
-use SilverStripe\Forms\HiddenField;
+use PhpTek\JSONText\Exception\JSONTextInvalidArgsException;
 
 class JSONText extends DBString
 {
@@ -81,7 +83,9 @@ class JSONText extends DBString
      * @config
      */
     private static $return_types = [
-        'json', 'array', 'silverstripe'
+        'json',
+        'array',
+        'silverstripe'
     ];
 
     /**
@@ -109,7 +113,7 @@ class JSONText extends DBString
      * @see    DBField::requireField()
      * @return void
      */
-    public function requireField()
+    public function requireField(): void
     {
         $parts = [
             'datatype'      => 'mediumtext',
@@ -130,7 +134,7 @@ class JSONText extends DBString
      * @param  string $title
      * @return HiddenField
      */
-    public function scaffoldSearchField($title = null)
+    public function scaffoldSearchField($title = null): ?FormField
     {
         return HiddenField::create($this->getName());
     }
@@ -140,7 +144,7 @@ class JSONText extends DBString
      * @param  string $params
      * @return HiddenField
      */
-    public function scaffoldFormField($title = null, $params = null)
+    public function scaffoldFormField($title = null, $params = null): ?FormField
     {
         return HiddenField::create($this->getName());
     }
@@ -298,7 +302,7 @@ class JSONText extends DBString
             return $this->returnAsType([]);
         }
 
-        $count = count($data) -1;
+        $count = count($data) - 1;
         $key = array_keys($data)[$count];
         $val = array_values($data)[$count];
 
@@ -401,7 +405,7 @@ class JSONText extends DBString
                     return $result;
                 }
             }
-        } else if($expressionParamIsValid) {
+        } else if ($expressionParamIsValid) {
             $dbBackendInst = $this->backendFactory($expression);
 
             if ($result = $dbBackendInst->matchOnExpr()) {
@@ -426,10 +430,10 @@ class JSONText extends DBString
      * @return JSONText
      * @throws JSONTextException
      */
-    public function setValue($value, $record = null, $expr = '')
+    public function setValue(mixed $value, null|array|ModelData $record = null, bool $markChanged = true, $expr = ''): static
     {
-        if (is_null($value)) {
-            return null;
+        if ($value === null) {
+            return parent::setValue($value, $record, $markChanged);
         }
 
         if (empty($expr)) {
@@ -453,9 +457,7 @@ class JSONText extends DBString
             $this->value = $this->jsonStore->toString();
         }
 
-        parent::setValue($this->value, $record);
-
-        return $this;
+        return parent::setValue($this->value, $record, $markChanged);
     }
 
     /**
@@ -516,10 +518,12 @@ class JSONText extends DBString
         }
 
         return Injector::inst()->createWithArgs(
-            $dbBackendClass, [
-            $operand,
-            $this
-        ]);
+            $dbBackendClass,
+            [
+                $operand,
+                $this
+            ]
+        );
     }
 
     /**
@@ -543,7 +547,8 @@ class JSONText extends DBString
     /**
      * @return boolean
      */
-    public function isValidDBValue($value) {
+    public function isValidDBValue($value)
+    {
         if (in_array($value, ['true', 'false'])) {
             return false;
         }
@@ -605,5 +610,4 @@ class JSONText extends DBString
             return $val;
         }
     }
-
 }

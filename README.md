@@ -4,9 +4,9 @@
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/phptek/silverstripe-jsontext/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/phptek/silverstripe-jsontext/?branch=master)
 [![License](https://poser.pugx.org/phptek/jsontext/license.svg)](https://github.com/phptek/silverstripe-jsontext/blob/master/LICENSE.md)
 
-* SS5 compatible fork of [phptek/silverstripe-jsontext](https://github.com/phptek/silverstripe-jsontext)
+* SS6 compatible fork of [phptek/silverstripe-jsontext](https://github.com/phptek/silverstripe-jsontext)
 
-Exposes a complete API that allows developers to write-to, and query-from JSON in a dedicated `DBField` subclass. 
+Exposes a complete API that allows developers to write-to, and query-from JSON in a dedicated `DBField` subclass.
 
 In addition, if your project uses the `silverstripe/cms` package, then all `SiteTree` objects are automatically extended to allow multiple, arbitrary UI fields as declared in `getCMSFields()`, to write to a JSON object in a _single_ database field.
 
@@ -39,7 +39,7 @@ or [Postgres' JSON operators](https://www.postgresql.org/docs/9.5/static/functio
 
 ### Why?
 
-Project scenarios where storing 10s of terse configuration parameters as Booleans and Ints in separate database columns just seems crazy. 
+Project scenarios where storing 10s of terse configuration parameters as Booleans and Ints in separate database columns just seems crazy.
 
 When all you wanted was a simple key / value store but didn't want to muck about with the overhead of an RDBMS _and_ a NOSQL DB.
 
@@ -55,7 +55,7 @@ the `#>` operator is *just a simple path matcher*.
 
 ### Return types
 
-Regardless of the type of query you can set what type you'd like the data returned in via the `setReturnType()` method on a query by query basis. 
+Regardless of the type of query you can set what type you'd like the data returned in via the `setReturnType()` method on a query by query basis.
 
 Legitimate types are:
 
@@ -77,8 +77,8 @@ to an overloaded `setValue()` method.
 
 See [the usage docs](docs/en/usage.md) for examples of JSONPath and Postgres querying and updating.
 
-Note: This module's query API is based on a relatively simple JSON to array conversion principle. 
-It does *not* use Postgres' or MySQL's native JSON operators at or below the level of the ORM. The aim however 
+Note: This module's query API is based on a relatively simple JSON to array conversion principle.
+It does *not* use Postgres' or MySQL's native JSON operators at or below the level of the ORM. The aim however
 is to allow dev's to use their preferred DB's syntax, and to this end you can set
 the module into `mysql` or `postgres` mode using SS config, see [Configuration Docs](docs/en/configuration.md).
 
@@ -92,7 +92,7 @@ See: [Configuration Docs](docs/en/configuration.md).
 
 ## Usage
 
-See: [Usage Docs](docs/en/usage.md). 
+See: [Usage Docs](docs/en/usage.md).
 
 ## Contributing
 
@@ -117,7 +117,7 @@ Russell Michell 2016-2018 <russ@theruss.com>
 ## TODO
 
 * Add missing `prepValueForDB()` to `JSONText` class.
-* See official list of issues on GitHub. 
+* See official list of issues on GitHub.
 
 ## Support Me
 

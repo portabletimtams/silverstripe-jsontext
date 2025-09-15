@@ -24,12 +24,12 @@ class JSONTextIntegrationTest extends SapphireTest
     public function __construct()
     {
         $dir = realpath(__DIR__);
-        
+
         self::$fixture_file = $dir . '/fixtures/yml/MyAwesomeJSONModel.yml';
-        
+
         parent::__construct();
     }
-    
+
     /**
      * Allows us the ability to scaffold DB records for {@link TestOnly} implementations.
      * @var array
@@ -50,16 +50,16 @@ class JSONTextIntegrationTest extends SapphireTest
 
         // Primary assertion (JSON as return type is the default)
         $this->assertEquals('["buick"]', $field->query($expression));
-        
+
         // How about now?
-        $field->setValue('ford', null, $expression);
+        $field->setValue('ford', null, true, $expression);
         $model->setField('MyJSON', $field->getValue());
         $model->write();
         $this->assertEquals('["ford"]', $field->query($expression));
 
         // Secondary assertion
         $field
-            ->setValue('chrysler', null, $expression)
+            ->setValue('chrysler', null, true, $expression)
             ->setReturnType('array');
 
         // With chaining
@@ -82,19 +82,18 @@ class JSONTextIntegrationTest extends SapphireTest
         $this->assertEquals('["buick"]', $field->query($expression));
 
         // Secondary assertion
-        $field->setValue('ford', null, $expression);
+        $field->setValue('ford', null, true, $expression);
         $model->setField('MyJSON', $field->getValue());
         $model->write();
         $this->assertEquals('["ford"]', $field->query($expression));
-        
+
         // With chaining
         $field
-            ->setValue('chrysler', null, $expression)
+            ->setValue('chrysler', null, true, $expression)
             ->setReturnType('array');
-        
+
         $model->setField('MyJSON', $field->getValue());
         $model->write();
         $this->assertEquals(['chrysler'], $field->query($expression));
     }
-
 }

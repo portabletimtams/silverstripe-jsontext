@@ -23,8 +23,8 @@ class JSONTextQueryTest extends SapphireTest
      * @var array
      */
     protected $fixtures = [
-        'array'     => 'fixtures/json/array.json',
-        'object'    => 'fixtures/json/object.json',
+        'array'     => __DIR__ . '/fixtures/json/array.json',
+        'object'    => __DIR__ . '/fixtures/json/object.json',
     ];
 
     /**
@@ -33,23 +33,9 @@ class JSONTextQueryTest extends SapphireTest
     protected $sut;
 
     /**
-     * JSONTextTest constructor.
-     *
-     * Modify fixtures property to be able to run on PHP <5.6 without use of constant in class property which 5.6+ allows
-     */
-    public function __construct()
-    {
-        foreach($this->fixtures as $name => $path) {
-            $this->fixtures[$name] = realpath(__DIR__) . '/' . $path;
-        }
-        
-        parent::__construct();
-    }
-
-    /**
      * Setup the System Under Test for this test suite.
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -86,7 +72,7 @@ class JSONTextQueryTest extends SapphireTest
         // SS Type: Float
         $field->setReturnType('silverstripe');
         $field->setValue($this->getFixture('array'));
-        $this->assertInternalType('array', $field->query('->', 3));
+        $this->assertIsArray($field->query('->', 3));
         $this->assertInstanceOf(DBFloat::class, $field->query('->', 3)[3]);
         $this->assertEquals(44.6, $field->query('->', 3)[3]->getValue());
 
@@ -96,7 +82,7 @@ class JSONTextQueryTest extends SapphireTest
         // SS Type: Boolean
         $field->setReturnType('silverstripe');
         $field->setValue($this->getFixture('array'));
-        $this->assertInternalType('array', $field->query('->', 1));
+        $this->assertIsArray($field->query('->', 1));
         $this->assertInstanceOf(DBBoolean::class, $field->query('->', 1)[1]);
         $this->assertEquals(1, $field->query('->', 1)[1]->getValue());
 
@@ -106,7 +92,7 @@ class JSONTextQueryTest extends SapphireTest
         // SS Type: Int
         $field->setReturnType('silverstripe');
         $field->setValue($this->getFixture('array'));
-        $this->assertInternalType('array', $field->query('->', 5));
+        $this->assertIsArray($field->query('->', 5));
         $this->assertInstanceOf(DBInt::class, $field->query('->', 5)[5]);
         $this->assertEquals(101, $field->query('->', 5)[5]->getValue());
 
@@ -116,14 +102,14 @@ class JSONTextQueryTest extends SapphireTest
         // SS Type: Varchar
         $field->setReturnType('silverstripe');
         $field->setValue($this->getFixture('array'));
-        $this->assertInternalType('array', $field->query('->', 4));
+        $this->assertIsArray($field->query('->', 4));
         $this->assertInstanceOf(DBVarchar::class, $field->query('->', 4)[4]);
         $this->assertEquals('buick', $field->query('->', 4)[4]->getValue());
 
         // Test: Empty #1
         $field->setReturnType('array');
         $field->setValue('');
-        $this->assertInternalType('array', $field->query('->', 3));
+        $this->assertIsArray($field->query('->', 3));
         $this->assertCount(0, $field->query('->', 3));
 
         // Test: Invalid #1
@@ -167,7 +153,7 @@ class JSONTextQueryTest extends SapphireTest
         // SS Type: Varchar
         $field->setReturnType('silverstripe');
         $field->setValue($this->getFixture('object'));
-        $this->assertInternalType('array', $field->query('->>', 'Subaru'));
+        $this->assertIsArray($field->query('->>', 'Subaru'));
         $this->assertInstanceOf(DBVarchar::class, $field->query('->>', 'Subaru')['Subaru']);
         $this->assertEquals('Impreza', $field->query('->>', 'Subaru')['Subaru']->getValue());
 
@@ -177,7 +163,7 @@ class JSONTextQueryTest extends SapphireTest
         // SS Type: Boolean
         $field->setReturnType('silverstripe');
         $field->setValue($this->getFixture('object'));
-        $this->assertInternalType('array', $field->query('->>', 'beer tastes good'));
+        $this->assertIsArray($field->query('->>', 'beer tastes good'));
         $this->assertInstanceOf(DBBoolean::class, $field->query('->>', 'beer tastes good')['beer tastes good']);
         $this->assertEquals(1, $field->query('->>', 'beer tastes good')['beer tastes good']->getValue());
 
@@ -187,7 +173,7 @@ class JSONTextQueryTest extends SapphireTest
         // SS Type: Float
         $field->setReturnType('silverstripe');
         $field->setValue($this->getFixture('object'));
-        $this->assertInternalType('array', $field->query('->>', 'how sure are you'));
+        $this->assertIsArray($field->query('->>', 'how sure are you'));
         $this->assertInstanceOf(DBFloat::class, $field->query('->>', 'how sure are you')['how sure are you']);
         $this->assertEquals(99.99, $field->query('->>', 'how sure are you')['how sure are you']->getValue());
 
@@ -197,7 +183,7 @@ class JSONTextQueryTest extends SapphireTest
         // SS Type: Int
         $field->setReturnType('silverstripe');
         $field->setValue($this->getFixture('object'));
-        $this->assertInternalType('array', $field->query('->>', 'how high'));
+        $this->assertIsArray($field->query('->>', 'how high'));
         $this->assertInstanceOf(DBInt::class, $field->query('->>', 'how high')['how high']);
         $this->assertEquals(6, $field->query('->>', 'how high')['how high']->getValue());
 
@@ -207,8 +193,8 @@ class JSONTextQueryTest extends SapphireTest
         // SS Type: N/A Nested sub-array example, expect an array
         $field->setReturnType('silverstripe');
         $field->setValue($this->getFixture('object'));
-        $this->assertInternalType('array', $field->query('->>', 'planes')['planes']);
-        $this->assertInternalType('array', $field->query('->>', 'planes')['planes']['russian']);
+        $this->assertIsArray($field->query('->>', 'planes')['planes']);
+        $this->assertIsArray($field->query('->>', 'planes')['planes']['russian']);
         $this->assertCount(2, $field->query('->>', 'planes')['planes']['russian']);
         $this->assertInstanceOf(DBVarchar::class, $field->query('->>', 'planes')['planes']['russian'][0]);
         $this->assertInstanceOf(DBVarchar::class, $field->query('->>', 'planes')['planes']['russian'][1]);
@@ -216,7 +202,7 @@ class JSONTextQueryTest extends SapphireTest
         // Test: Empty #1
         $field->setReturnType('array');
         $field->setValue('');
-        $this->assertInternalType('array', $field->query('->>', 'planes'));
+        $this->assertIsArray($field->query('->>', 'planes'));
         $this->assertCount(0, $field->query('->', 3));
 
         // Test: Empty #2
@@ -244,7 +230,7 @@ class JSONTextQueryTest extends SapphireTest
         $field->setReturnType('array');
         $field->setValue($this->getFixture('object'));
         $this->assertEquals(
-            [['Subaru' => 'Impreza'],['Kawasaki' => 'KR1S250']],
+            [['Subaru' => 'Impreza'], ['Kawasaki' => 'KR1S250']],
             $field->query('#>', '{"japanese":"fast"}')
         );
 
@@ -265,14 +251,14 @@ class JSONTextQueryTest extends SapphireTest
         // Expect: Array due to duplicate keys in different parts of the source data
         $field->setReturnType('silverstripe');
         $field->setValue($this->getFixture('object'));
-        $this->assertInternalType('array', $field->query('#>', '{"japanese":"fast"}'));
+        $this->assertIsArray($field->query('#>', '{"japanese":"fast"}'));
         $this->assertCount(2, $field->query('#>', '{"japanese":"fast"}'));
 
         $one = $field->query('#>', '{"japanese":"fast"}')[0];
         $two = $field->query('#>', '{"japanese":"fast"}')[1];
 
-        $this->assertInternalType('array', $one);
-        $this->assertInternalType('array', $two);
+        $this->assertIsArray($one);
+        $this->assertIsArray($two);
         $this->assertInstanceOf(DBVarchar::class, array_values($one)[0]);
         $this->assertInstanceOf(DBVarchar::class, array_values($two)[0]);
         $this->assertEquals('Impreza', array_values($one)[0]->getValue());
@@ -300,7 +286,7 @@ class JSONTextQueryTest extends SapphireTest
         // Expect: Direct scalar comparison assertion (Varchar)
         $field->setReturnType('silverstripe');
         $field->setValue($this->getFixture('object'));
-        $this->assertInternalType('array', $field->query('#>', '{"planes":"french"}'));
+        $this->assertIsArray($field->query('#>', '{"planes":"french"}'));
         $this->assertInstanceOf(DBVarchar::class, $field->query('#>', '{"planes":"french"}')[0]);
         $this->assertEquals('airbus', $field->query('#>', '{"planes":"french"}')[0]->getValue());
 
@@ -313,8 +299,8 @@ class JSONTextQueryTest extends SapphireTest
 
         $res = $field->query('#>', '{"floats":"0"}');
 
-        $this->assertInternalType('array', $res);
-        $this->assertInternalType('array', $res[0]); // Why? Because value of "floats" key is a JSON array
+        $this->assertIsArray($res);
+        $this->assertIsArray($res[0]); // Why? Because value of "floats" key is a JSON array
         $this->assertInstanceOf(DBFloat::class, array_values($res[0])[0]);
         $this->assertEquals(99.99, array_values($res[0])[0]->getValue());
 
@@ -327,8 +313,8 @@ class JSONTextQueryTest extends SapphireTest
 
         $res = $field->query('#>', '{"ints":"0"}');
 
-        $this->assertInternalType('array', $res);
-        $this->assertInternalType('array', $res[0]); // Why? Because value of "floats" key is a JSON array
+        $this->assertIsArray($res);
+        $this->assertIsArray($res[0]); // Why? Because value of "floats" key is a JSON array
         $this->assertInstanceOf(DBInt::class, array_values($res[0])[1]);
         $this->assertEquals(6, array_values($res[0])[1]->getValue());
 
@@ -341,8 +327,8 @@ class JSONTextQueryTest extends SapphireTest
 
         $res = $field->query('#>', '{"booleans":"0"}');
 
-        $this->assertInternalType('array', $res);
-        $this->assertInternalType('array', $res[0]); // Why? Because value of "booleans" key is a JSON array
+        $this->assertIsArray($res);
+        $this->assertIsArray($res[0]); // Why? Because value of "booleans" key is a JSON array
         $this->assertInstanceOf(DBBoolean::class, array_values($res[0])[0]);
         $this->assertEquals(1, array_values($res[0])[0]->getValue());
 
@@ -357,7 +343,7 @@ class JSONTextQueryTest extends SapphireTest
         $this->assertNull($field->query('#>', '{"ints":"1"}')); // The "ints" key only has a single array as a value
 
         // #3 Invalid operand on RHS
-        $this->setExpectedException(JSONTextException::class);
+        $this->expectException(JSONTextException::class);
         $field->setReturnType('array');
         $field->setValue($this->getFixture('object'));
         $this->assertEquals(['Kawasaki' => 'KR1S250'], $field->query('#>', '{"japanese":"fast"'));
@@ -378,7 +364,7 @@ class JSONTextQueryTest extends SapphireTest
         // Expect: Array, obviously due to no. nodes in the source JSON
         $field->setReturnType('array');
         $field->setValue($this->getFixture('object'));
-        $this->assertInternalType('array', $field->query('$..'));
+        $this->assertIsArray($field->query('$..'));
         $this->assertCount(25, $field->query('$..'));
 
         // Data Source: Object
@@ -421,7 +407,7 @@ class JSONTextQueryTest extends SapphireTest
         // Expect: Array 0f SilverStripe types
         $field->setReturnType('silverstripe');
         $field->setValue($this->getFixture('object'));
-        $this->assertInternalType('array', $field->query('$.cars.american[*]'));
+        $this->assertIsArray($field->query('$.cars.american[*]'));
         $this->assertCount(2, $field->query('$.cars.american[*]'));
         $this->assertInstanceOf(DBVarchar::class, $field->query('$.cars.american[*]')[0]);
         $this->assertEquals('buick', $field->query('$.cars.american[*]')[0]->getValue());
@@ -434,11 +420,11 @@ class JSONTextQueryTest extends SapphireTest
     {
         $field = $this->sut;
 
-        $this->setExpectedException(JSONTextException::class);
+        $this->expectException(JSONTextException::class);
         $field->setValue('["trabant"]');
         $field->query('$.cars.american[*]', 'foo'); // Cannot pass multiple args when in JSONPath context
 
-        $this->setExpectedException(null);
+        $this->expectException(null);
         $field->setValue('');
         $field->query('$.cars.american[*]', 'foo'); // Still shouldn't, but routine only kicks in _After_ checks made in setValue()
     }
@@ -454,5 +440,4 @@ class JSONTextQueryTest extends SapphireTest
         $files = $this->fixtures;
         return file_get_contents($files[$fixture]);
     }
-
 }
